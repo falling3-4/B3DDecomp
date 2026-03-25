@@ -1,4 +1,4 @@
-name: Build Blitz3DDecomp
+name: Build Blitz3DDecomp Suite
 
 on:
   push:
@@ -22,21 +22,21 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore Blitz3DDecomp.sln
 
-    - name: Build Solution
-      run: dotnet build Blitz3DDecomp.sln --configuration Release --no-restore
-
-    - name: Publish Blitz3DDecomp
+    - name: Build and Publish Suite
       run: |
-        dotnet publish Blitz3DDecomp/Blitz3DDecomp.csproj `
+        dotnet publish Blitz3DDecomp.sln `
           --configuration Release `
           --output ./publish `
           --runtime win-x64 `
           --self-contained false `
-          -p:PublishSingleFile=true `
-          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:PublishReadyToRun=true
+
+    - name: Zip Release
+      run: |
+        Compress-Archive -Path ./publish/* -DestinationPath Blitz3DDecomp_v${{ github.run_number }}.zip
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Blitz3DDecomp-Binary
-        path: ./publish/*.exe
+        name: Blitz3DDecomp-Win64
+        path: Blitz3DDecomp_v${{ github.run_number }}.zip
