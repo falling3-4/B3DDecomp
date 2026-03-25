@@ -1,0 +1,42 @@
+name: Build Blitz3DDecomp
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+
+    - name: Restore Dependencies
+      run: dotnet restore Blitz3DDecomp.sln
+
+    - name: Build Solution
+      run: dotnet build Blitz3DDecomp.sln --configuration Release --no-restore
+
+    - name: Publish Blitz3DDecomp
+      run: |
+        dotnet publish Blitz3DDecomp/Blitz3DDecomp.csproj `
+          --configuration Release `
+          --output ./publish `
+          --runtime win-x64 `
+          --self-contained false `
+          -p:PublishSingleFile=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Blitz3DDecomp-Binary
+        path: ./publish/*.exe
