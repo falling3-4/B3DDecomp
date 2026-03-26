@@ -408,10 +408,18 @@ internal static class Program
                     break;
                 }
             }
+            if (indexOfNul == -1)
+            {
+                indexOfNul = symbolData.Length;
+            }
             if (hasFourLeadingZeroes)
             {
                 symbolData = symbolData[4..];
                 indexOfNul -= 4;
+            }
+            if (indexOfNul < 0) 
+            {
+                indexOfNul = 0;
             }
 
             string strValue = Encoding.ASCII.GetString(symbolData[..indexOfNul]);
