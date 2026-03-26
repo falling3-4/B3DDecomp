@@ -73,7 +73,12 @@ static class DetermineLibParameterCount
                     }
                     break;
                 case "call":
-                    if (instruction.DestArg.EndsWith("_begin__MAIN")) { continue; }
+                    if (instruction.DestArg.EndsWith("_begin__MAIN") || 
+                        instruction.DestArg.StartsWith("@_l_") || 
+                        instruction.DestArg.StartsWith("_l_")) 
+                    { 
+                        continue; 
+                    }
                     var callee = Function.TryGetFunctionByName(instruction.DestArg);
                     if (callee is null)
                     {
@@ -157,7 +162,12 @@ static class DetermineLibParameterCount
                     }
                     break;
                 case "call":
-                    if (instruction.DestArg.EndsWith("_begin__MAIN")) { continue; }
+                    if (instruction.DestArg.EndsWith("_begin__MAIN") || 
+                        instruction.DestArg.StartsWith("@_l_") || 
+                        instruction.DestArg.StartsWith("_l_")) 
+                    { 
+                        continue; 
+                    }
                     var callee = Function.GetFunctionByName(instruction.DestArg);
                     if (!callee.Name.EndsWith("__LIBS")
                         || context.SolvedFunctions.Contains(callee))
